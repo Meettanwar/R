@@ -1,0 +1,48 @@
+# Load necessary libraries
+library(readr)
+
+# Import the dataset and check structure
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+str(data1)  # Check the structure of the dataset
+
+# Check and clean column names to remove any special characters or extra spaces
+colnames(data1) <- make.names(colnames(data1))
+
+# Ensure that relevant columns are in the correct format
+data1$Heart.Attack.Risk <- as.factor(data1$Heart.Attack.Risk)  # Convert to factor if categorical
+data1$Cholesterol <- as.numeric(data1$Cholesterol)  # Ensure Cholesterol is numeric
+data1$Heart.Rate <- as.numeric(data1$Heart.Rate)  # Ensure Heart Rate is numeric
+data1$Age <- as.numeric(data1$Age)  # Ensure Age is numeric
+
+# Remove NA values
+data1_clean <- na.omit(data1)
+
+# Bar Chart: Frequency of Heart Attack Risk
+barplot(table(data1_clean$Heart.Attack.Risk), 
+        main = "Frequency of Heart Attack Risk", 
+        xlab = "Heart Attack Risk", 
+        ylab = "Frequency", 
+        col = "lightblue")
+
+# Box Plot: Distribution of Cholesterol Levels
+boxplot(data1_clean$Cholesterol, 
+        main = "Boxplot of Cholesterol Levels", 
+        ylab = "Cholesterol", 
+        col = "lightgreen")
+
+# Scatter Plot: Cholesterol vs Heart Rate
+plot(data1_clean$Cholesterol, data1_clean$Heart.Rate, 
+     main = "Cholesterol vs Heart Rate", 
+     xlab = "Cholesterol", 
+     ylab = "Heart Rate", 
+     pch = 19, 
+     col = "blue")
+
+# Line Chart: Cholesterol over Age
+plot(data1_clean$Age, data1_clean$Cholesterol, 
+     type = "l", 
+     main = "Cholesterol Over Age", 
+     xlab = "Age", 
+     ylab = "Cholesterol", 
+     col = "red", 
+     lwd = 2)
