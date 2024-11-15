@@ -1,0 +1,41 @@
+# Load necessary libraries
+library(tidyverse)
+library(readr)
+
+# Import the dataset
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+
+# Function to calculate mode
+get_mode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+# Select only numeric columns
+numeric_columns <- select_if(data1, is.numeric)
+
+# Apply all statistical functions and print the results for each numeric column
+for (col_name in names(numeric_columns)) {
+  cat("\nStatistics for", col_name, ":\n")
+  
+  # Extract the column
+  col_data <- numeric_columns[[col_name]]
+  
+  # Descriptive statistics
+  cat("Mean: ", mean(col_data, na.rm = TRUE), "\n")
+  cat("Median: ", median(col_data, na.rm = TRUE), "\n")
+  cat("Mode: ", get_mode(col_data), "\n")
+  cat("Max: ", max(col_data, na.rm = TRUE), "\n")
+  cat("Min: ", min(col_data, na.rm = TRUE), "\n")
+  cat("Range: ", diff(range(col_data, na.rm = TRUE)), "\n")
+  cat("25th Quantile: ", quantile(col_data, 0.25, na.rm = TRUE), "\n")
+  cat("50th Quantile: ", quantile(col_data, 0.50, na.rm = TRUE), "\n")
+  cat("75th Quantile: ", quantile(col_data, 0.75, na.rm = TRUE), "\n")
+  cat("IQR: ", IQR(col_data, na.rm = TRUE), "\n")
+  cat("Variance: ", var(col_data, na.rm = TRUE), "\n")
+  cat("Standard Deviation: ", sd(col_data, na.rm = TRUE), "\n")
+  
+  cat("\n-------------------------------------\n")
+}
+
+summary(data1)
