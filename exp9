@@ -1,0 +1,67 @@
+# Load necessary libraries
+library(shiny)
+library(ggplot2)
+library(dplyr)
+
+# Define UI for the application
+ui <- fluidPage(
+  titlePanel("Heart Attack Dataset Analysis"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      fileInput("file", "Choose CSV File", 
+                accept = c("text/csv", 
+                           "text/comma-separated-values,text/plain", 
+                           ".csv")),
+      tags$hr(),
+      checkboxInput("header", "Header", TRUE),
+      selectInput("xvar", "Choose X variable:", choices = NULL),
+      selectInput("yvar", "Choose Y variable:", choices = NULL),
+      actionButton("plotButton", "Plot")
+    ),
+    
+    mainPanel(
+      tableOutput("summary"),
+      plotOutput("scatterPlot")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output, session) {
+  
+  # Reactive expression to read the dataset
+  dataset <- reactive({
+    req(input$file)  # Require that a file is uploaded
+    read.csv(input$file$datapath, header = input$header)
+  })
+  
+  # Update choices for x and y variables
+  observe({
+    df <- dataset()
+    updateSelectInput(session, "xvar", choices = names(df))
+    updateSelectInput(session, "yvar", choices = names(df))
+  })
+  
+  # Display summary of the dataset
+  output$summary <- renderTable({
+    req(dataset())
+    summary(dataset())
+  })
+  
+  # Create a scatter plot based on user input
+  output$scatterPlot <- renderPlot({
+    req(input$plotButton)  # Ensure the button is pressed
+    req(dataset())  # Ensure the dataset is available
+    req(input$xvar, input$yvar)  # Ensure variables are selected
+    
+    df <- dataset()
+    ggplot(df, aes_string(x = input$xvar, y = input$yvar)) +
+      geom_point(color = "blue") +
+      labs(title = "Scatter Plot", x = input$xvar, y = input$yvar) +
+      theme_minimal()
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
