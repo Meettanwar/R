@@ -1,0 +1,28 @@
+# Load necessary libraries
+library(ggplot2)
+library(readr)
+library(reshape2)
+
+# Import the dataset
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+
+# Check and clean column names to remove any special characters or extra spaces
+colnames(data1) <- make.names(colnames(data1))
+
+# Remove NA values
+data1_clean <- na.omit(data1)
+
+# Create a correlation matrix for numeric variables
+correlation_matrix <- cor(data1_clean[, sapply(data1_clean, is.numeric)])
+
+# Convert the correlation matrix to a long format for ggplot2
+melted_correlation <- melt(correlation_matrix)
+
+# Create a heatmap using ggplot2
+ggplot(data = melted_correlation, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), name="Correlation") +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap", x = "Variables", y = "Variables") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
