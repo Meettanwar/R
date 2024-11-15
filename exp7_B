@@ -1,0 +1,27 @@
+# Load necessary libraries
+library(ggplot2)
+library(treemapify)
+library(readr)
+
+# Import the dataset
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+
+# Check and clean column names to remove any special characters or extra spaces
+colnames(data1) <- make.names(colnames(data1))
+
+# Remove NA values
+data1_clean <- na.omit(data1)
+
+# Create a treemap: Example using Heart Attack Risk and another numerical variable like Cholesterol
+# Make sure to modify the variables as per your dataset and what you want to visualize
+treemap_data <- data1_clean %>%
+  group_by(Heart.Attack.Risk) %>%
+  summarise(Total.Cholesterol = sum(Cholesterol, na.rm = TRUE)) # Summarize total cholesterol by risk level
+
+# Create the treemap
+ggplot(treemap_data, aes(area = Total.Cholesterol, fill = Heart.Attack.Risk, label = Heart.Attack.Risk)) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white", place = "centre", grow = TRUE) +
+  theme_minimal() +
+  labs(title = "Treemap of Cholesterol by Heart Attack Risk",
+       fill = "Heart Attack Risk")
