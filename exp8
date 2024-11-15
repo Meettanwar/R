@@ -1,0 +1,61 @@
+# Load necessary libraries
+library(caret)
+library(readr)
+library(rpart)
+library(rpart.plot)
+
+# Import the dataset
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+
+# Check and clean column names to remove any special characters or extra spaces
+colnames(data1) <- make.names(colnames(data1))
+
+# Remove NA values
+data1_clean <- na.omit(data1)
+
+# Convert relevant columns to factor
+data1_clean$Heart.Attack.Risk <- as.factor(data1_clean$Heart.Attack.Risk)
+
+# Set the seed for reproducibility
+set.seed(123)
+
+# Split the dataset into training and testing sets
+trainIndex <- createDataPartition(data1_clean$Heart.Attack.Risk, 
+                                  p = .7, 
+                                  list = FALSE, 
+                                  times = 1)
+
+dataTrain <- data1_clean[trainIndex, ]
+dataTest <- data1_clean[-trainIndex, ]
+
+# Train a logistic regression model
+logistic_model <- train(Heart.Attack.Risk ~ ., 
+                        data = dataTrain, 
+                        method = "glm", 
+                        family = "binomial")
+
+# Train a decision tree model
+tree_model <- train(Heart.Attack.Risk ~ ., 
+                    data = dataTrain, 
+                    method = "rpart")
+
+# Make predictions
+logistic_pred <- predict(logistic_model, newdata = dataTest)
+tree_pred <- predict(tree_model, newdata = dataTest)
+
+# Evaluate the models
+logistic_confusion <- confusionMatrix(logistic_pred, dataTest$Heart.Attack.Risk)
+tree_confusion <- confusionMatrix(tree_pred, dataTest$Heart.Attack.Risk)
+
+# Print the results
+print("Logistic Regression Results:")
+print(logistic_confusion)
+
+print("Decision Tree Results:")
+print(tree_confusion)
+
+# Visualize the decision tree
+rpart.plot(tree_model$finalModel, 
+           main = "Decision Tree for Heart Attack Risk",
+           type = 1, 
+           extra = 101)
