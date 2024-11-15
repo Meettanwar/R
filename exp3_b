@@ -17,11 +17,11 @@ print(df)
 
 #exporting 
 #exporting data to csv file
-#write.csv(data1,"C:\\Users\\Advika Sharma\\Desktop\\R\\data.csv")
+#write.csv(data1,"C:\\Users\\Meet Tanwar\\Desktop\\R\\data.csv")
 
 #exporting own data 
 #write.table(df,
-#file = "C:\\Users\\Advika Sharma\\Desktop\\R\\student.txt",
+#file = "C:\\Users\\Meet Tanwar\\Desktop\\R\\student.txt",
 #sep = "\t",
 #row.names = TRUE,
 #col.names = NA)
