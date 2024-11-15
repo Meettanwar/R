@@ -1,0 +1,28 @@
+# Load necessary libraries
+library(tidyverse)
+library(readr)
+
+# Import the dataset
+data1 <- read.csv("D:\\R\\heart_attack.csv", header = TRUE)
+
+# Insert some NA values (for demonstration)
+set.seed(123) # For reproducibility
+data1[sample(1:nrow(data1), 5), "Cholesterol"] <- NA  # Insert NA in Cholesterol column
+data1[sample(1:nrow(data1), 3), "Heart Rate"] <- NA  # Insert NA in Heart Rate column
+
+# View the data with inserted NA values
+head(data1, n = 10)
+
+# Apply data cleaning - Remove rows with any NA values
+cleaned_data <- data1 %>%
+  drop_na()
+
+# Or you can remove only specific columns with NA values
+# cleaned_data <- data1 %>%
+#   drop_na(Cholesterol, Heart.Rate)
+
+# View cleaned data
+head(cleaned_data, n = 10)
+
+# Optionally, export the cleaned data
+write.csv(cleaned_data, "D:\\R\\cleaned_heart_attack.csv", row.names = FALSE)
